@@ -13,8 +13,10 @@ export interface ButtonProps {
 }
 
 export interface AuthInputProps {
-  type: "email" | "password";
+  type: "email" | "password" | "text";
   placeholder: string;
   name: string;
   register?: any;
+  error?: boolean;
+  errorText?: string;
 }
