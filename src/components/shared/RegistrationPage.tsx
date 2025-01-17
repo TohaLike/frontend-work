@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { registrationSchema } from "@/validations/registration";
 import Link from "next/link";
+import AuthService from "@/services/AuthService";
 
 export const RegistrationPage: React.FC = () => {
   const form = useForm({
@@ -22,8 +23,15 @@ export const RegistrationPage: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await AuthService.registration(data);
+      // console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -75,7 +83,7 @@ export const RegistrationPage: React.FC = () => {
                       type="text"
                       name="name"
                       placeholder="Имя"
-                      register={form.register("name")}
+                      register={register("name")}
                       error={!!errors.name}
                       errorText={errors?.name?.message}
                     />
@@ -94,7 +102,7 @@ export const RegistrationPage: React.FC = () => {
                       type="text"
                       name="email"
                       placeholder="Email@mail.ru"
-                      register={form.register("email")}
+                      register={register("email")}
                       error={!!errors.email}
                       errorText={errors?.email?.message}
                     />
@@ -113,7 +121,7 @@ export const RegistrationPage: React.FC = () => {
                       type="password"
                       name="password"
                       placeholder="Password123@/"
-                      register={form.register("password")}
+                      register={register("password")}
                       error={!!errors.password}
                       errorText={errors?.password?.message}
                     />

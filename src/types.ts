@@ -20,3 +20,16 @@ export interface AuthInputProps {
   error?: boolean;
   errorText?: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
