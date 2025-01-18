@@ -1,7 +1,9 @@
+import { ReactNode } from "react";
+
 export interface ButtonProps {
   type: "button" | "reset" | "submit";
   variant?: "contained" | "outlined" | "text";
-  children?: string | number;
+  children?: string | number | ReactNode;
   onClick?: (action: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   icon?: React.ReactNode;
   startIcon?: React.ReactNode;
@@ -19,6 +21,7 @@ export interface AuthInputProps {
   register?: any;
   error?: boolean;
   errorText?: string;
+  titleField?: string
 }
 
 export interface User {
@@ -32,4 +35,8 @@ export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
+}
+
+export interface CaptchaResponse {
+   
 }

@@ -3,6 +3,7 @@
   --foreground: #171717;
   --secondary-text: #313957;
   --primary-text: #0C1421;
+  --border-black-transparent: rgba(0, 0, 0, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {

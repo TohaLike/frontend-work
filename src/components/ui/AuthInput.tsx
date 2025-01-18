@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { OutlinedInputProps, TextField, Typography } from "@mui/material";
 import { AuthInputProps } from "@/types";
@@ -18,6 +18,9 @@ const styles = {
     "&.Mui-focused": {
       borderColor: "transparent",
     },
+    "& .MuiOutlinedInput-input": {
+      p: "11.5px 14px",
+    }
   },
 };
 
@@ -28,9 +31,22 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   register,
   error,
   errorText,
+  titleField,
 }) => {
   return (
     <div>
+      {titleField && (
+        <Typography
+          variant="body1"
+          fontSize={"16px"}
+          fontWeight={"400"}
+          textAlign={"start"}
+          color="var(--primary-text)"
+          p="0 3px 8px"
+        >
+          {titleField}
+        </Typography>
+      )}
       <TextField
         type={type}
         placeholder={placeholder}
@@ -45,7 +61,10 @@ export const AuthInput: React.FC<AuthInputProps> = ({
         }}
       />
       {error && (
-        <Typography variant="body2" sx={{ fontSize: "12px", color: "red", p: "5px"}}>
+        <Typography
+          variant="body2"
+          sx={{ fontSize: "12px", color: "red", p: "5px", textAlign: "start" }}
+        >
           {errorText}
         </Typography>
       )}

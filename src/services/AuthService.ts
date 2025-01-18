@@ -14,7 +14,8 @@ export default class AuthService {
     return $api.post("/registration", userData);
   }
 
-  static async refresh() {
-    
+
+  static async captcha(): Promise<AxiosResponse> {
+    return $api.get("/captcha")
   }
 }

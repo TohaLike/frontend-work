@@ -1,20 +1,26 @@
 "use client";
-import React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import { ActionButton, AuthInput, Container } from "../ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { registrationSchema } from "@/validations/registration";
-import Link from "next/link";
 import AuthService from "@/services/AuthService";
+import Link from "next/link";
+
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 export const RegistrationPage: React.FC = () => {
+  const [isSvg, setIsSvg] = useState<string | undefined | any>(null);
+  const [loadingCaptcha, setLoadingCaptha] = useState<boolean>(false);
+
   const form = useForm({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
+      captcha: "",
     },
   });
 
@@ -26,13 +32,27 @@ export const RegistrationPage: React.FC = () => {
   const onSubmit = async (data: any) => {
     try {
       const response = await AuthService.registration(data);
-      // console.log(response.data);
-
       return response.data;
     } catch (error) {
       console.log(error);
     }
   };
+
+  const getCaptcha = async () => {
+    try {
+      const response = await AuthService.captcha();
+      setIsSvg(`data:image/svg+xml;base64,${btoa(response?.data)}`);
+      return response.data;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    setLoadingCaptha(true);
+    getCaptcha();
+    setLoadingCaptha(false);
+  }, [loadingCaptcha]);
 
   return (
     <>
@@ -42,13 +62,11 @@ export const RegistrationPage: React.FC = () => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <Box
                 sx={{
-                  position: "absolute",
-                  transform: "translate(-50%, -50%)",
-                  top: "50%",
-                  left: "50%",
-                  width: "100%",
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                  minHeight: "100vh",
                 }}
               >
                 <Paper
@@ -66,22 +84,15 @@ export const RegistrationPage: React.FC = () => {
                     whiteSpace={"pre-wrap"}
                     fontWeight={"600"}
                     fontSize={"36px"}
+                    textAlign={"start"}
                   >
                     Регистрация
                   </Typography>
                   <Box mt={"30px"}>
-                    <Typography
-                      variant="body1"
-                      fontSize={"16px"}
-                      fontWeight={"400"}
-                      color="var(--primary-text)"
-                      p="0 3px 8px"
-                    >
-                      Имя
-                    </Typography>
                     <AuthInput
                       type="text"
                       name="name"
+                      titleField="Имя"
                       placeholder="Имя"
                       register={register("name")}
                       error={!!errors.name}
@@ -89,44 +100,98 @@ export const RegistrationPage: React.FC = () => {
                     />
                   </Box>
                   <Box mt={"16px"}>
-                    <Typography
-                      variant="body1"
-                      fontSize={"16px"}
-                      fontWeight={"400"}
-                      color="var(--primary-text)"
-                      p="0 3px 8px"
-                    >
-                      Электронная почта
-                    </Typography>
                     <AuthInput
                       type="text"
                       name="email"
-                      placeholder="Email@mail.ru"
+                      titleField="Электронная почта"
+                      placeholder="email@email.ru"
                       register={register("email")}
                       error={!!errors.email}
                       errorText={errors?.email?.message}
                     />
                   </Box>
                   <Box mt={"16px"}>
-                    <Typography
-                      variant="body1"
-                      fontSize={"16px"}
-                      fontWeight={"400"}
-                      color="var(--primary-text)"
-                      p="0 3px 8px"
-                    >
-                      Пароль
-                    </Typography>
                     <AuthInput
                       type="password"
                       name="password"
-                      placeholder="Password123@/"
+                      titleField="Пароль"
+                      placeholder="Password123*"
                       register={register("password")}
                       error={!!errors.password}
                       errorText={errors?.password?.message}
                     />
                   </Box>
-
+                  <Box
+                    sx={{
+                      mt: "15px",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: "12px",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      fontSize={"16px"}
+                      fontWeight={"400"}
+                      textAlign={"start"}
+                      color="var(--primary-text)"
+                      p="0 3px 8px"
+                    >
+                      Введите код с картинки
+                    </Typography>
+                    {!loadingCaptcha ? (
+                      <img
+                        src={isSvg || null}
+                        alt="captcha"
+                        width={200}
+                        height={100}
+                        style={{maxHeight: "80px", width: "100%"}}
+                        draggable={false}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          width: "200px",
+                          height: "100px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <CircularProgress />
+                      </Box>
+                    )}
+                    <Box width={"100%"} display={"grid"} gridTemplateColumns={"1fr 30px"} alignItems={"center"}>
+                      <AuthInput
+                        type="text"
+                        name="captcha"
+                        placeholder="resolve"
+                        register={register("captcha")}
+                        error={!!errors.captcha}
+                        errorText={errors?.captcha?.message}
+                      />
+                      <Button
+                        type="button"
+                        disableFocusRipple
+                        disableRipple
+                        disableElevation
+                        disableTouchRipple
+                        sx={{
+                          p: 0,
+                          maxWidth: "30px",
+                          maxHeight: "30px",
+                          minWidth: "30px",
+                          minHeight: "30px",
+                          ":hover": {
+                            bgcolor: "transparent",
+                          }
+                        }}
+                        onClick={getCaptcha}
+                      >
+                        <RefreshIcon />
+                      </Button>
+                    </Box>
+                  </Box>
                   <Box
                     display={"flex"}
                     alignItems={"center"}
@@ -144,7 +209,6 @@ export const RegistrationPage: React.FC = () => {
                       Войти
                     </Typography>
                   </Box>
-
                   <ActionButton
                     type="submit"
                     variant="contained"
