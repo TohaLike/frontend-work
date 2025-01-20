@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { ActionButton, AuthInput, Container } from "../ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
@@ -32,6 +38,9 @@ export const RegistrationPage: React.FC = () => {
   const onSubmit = async (data: any) => {
     try {
       const response = await AuthService.registration(data);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      if (response.data) window.location.replace("/success/registration");
+
       return response.data;
     } catch (error) {
       console.log(error);
@@ -112,7 +121,7 @@ export const RegistrationPage: React.FC = () => {
                   </Box>
                   <Box mt={"16px"}>
                     <AuthInput
-                      type="password"
+                      type="text"
                       name="password"
                       titleField="Пароль"
                       placeholder="Password123*"
@@ -145,7 +154,7 @@ export const RegistrationPage: React.FC = () => {
                         alt="captcha"
                         width={200}
                         height={100}
-                        style={{maxHeight: "80px", width: "100%"}}
+                        style={{ maxHeight: "80px", width: "100%" }}
                         draggable={false}
                       />
                     ) : (
@@ -161,7 +170,12 @@ export const RegistrationPage: React.FC = () => {
                         <CircularProgress />
                       </Box>
                     )}
-                    <Box width={"100%"} display={"grid"} gridTemplateColumns={"1fr 30px"} alignItems={"center"}>
+                    <Box
+                      width={"100%"}
+                      display={"grid"}
+                      gridTemplateColumns={"1fr 30px"}
+                      alignItems={"center"}
+                    >
                       <AuthInput
                         type="text"
                         name="captcha"
@@ -184,7 +198,7 @@ export const RegistrationPage: React.FC = () => {
                           minHeight: "30px",
                           ":hover": {
                             bgcolor: "transparent",
-                          }
+                          },
                         }}
                         onClick={getCaptcha}
                       >
@@ -195,18 +209,18 @@ export const RegistrationPage: React.FC = () => {
                   <Box
                     display={"flex"}
                     alignItems={"center"}
-                    gap={"5px"}
+                    textAlign={"start"}
                     m={"10px 8px 0"}
                   >
                     <Typography variant="body2">
-                      Вы уже зарегистрированы?
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      component={Link}
-                      href={"/auth/login"}
-                    >
-                      Войти
+                      Вы уже зарегистрированы?{" "}
+                      <Typography
+                        variant="body2"
+                        component={Link}
+                        href={"/auth/login"}
+                      >
+                        Войти
+                      </Typography>
                     </Typography>
                   </Box>
                   <ActionButton

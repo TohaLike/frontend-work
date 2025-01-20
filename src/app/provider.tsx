@@ -5,21 +5,19 @@ import React, { PropsWithChildren, useEffect, useState } from "react";
 import axios from "axios";
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  // const [checkAuth, setCheckAuth] = useState<boolean>(true);
-
   const checkAuth = async () => {
     try {
       const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {
         withCredentials: true,
       });
-      localStorage.setItem("token", response.data.accessToken);
+      localStorage.setItem("accessToken", response.data.accessToken);
     } catch (e: any) {
       console.log(e?.response?.data?.message);
     }
   };
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (localStorage.getItem("accessToken")) {
       checkAuth();
     }
   }, []);

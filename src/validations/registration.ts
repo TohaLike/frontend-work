@@ -11,7 +11,7 @@ export const registrationSchema = z
       message:
         "Пароль должен содержать не менее 8 символов, включать хотя бы одну заглавную букву, одну цифру и один специальный символ",
     }),
-    captcha: z.string().min(8, { message: "Введите код с картинки" }).max(8),
+    captcha: z.string().min(0, { message: "Введите код с картинки" }),
   })
   .superRefine(({ password }, checkPassComplexity) => {
     const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
